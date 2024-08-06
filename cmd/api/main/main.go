@@ -1,8 +1,11 @@
 package main
 
 import (
+	"bookstore/internal/config"
+	"github.com/joho/godotenv"
 	"log"
 	"net/http"
+	"path/filepath"
 
 	"bookstore/internal/delivery/httpHandler"
 	"bookstore/internal/repository"
@@ -10,8 +13,21 @@ import (
 )
 
 func main() {
+
+	absPath := filepath.Join("C:\\", "Users", "AH.Yousefi", "GolandProjects", "bookstore-backend", ".env")
+	err := godotenv.Load(absPath)
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
+	// Initialize database connection
+	db, err := config.GetDBConnection()
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+	defer db.Close()
 	//Initialize Repository
-	repo := repository.NewTaskRepository()
+	repo := repository.NewTaskRepository(db)
 
 	//Initialize use case
 	taskUseCase := usecase.NewTaskUsecase(repo)
