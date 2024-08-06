@@ -37,6 +37,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("/tasks", taskHandler.HandleTasks)
+	mux.HandleFunc("/tasks/update-status", taskHandler.UpdateCompletedStatus) // New route for updating status
 
 	corsHandler := httpHandler.CORS(mux)
 
