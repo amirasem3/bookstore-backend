@@ -12,6 +12,7 @@ type TaskRepository interface {
 	GetTaskById(id int) (*entity.Task, error)
 	CreateTask(task *entity.Task) error
 	UpdateTask(task *entity.Task) error
+	UpdateTaskStatus(id int, completed bool) error // Add method signature
 	DeleteTask(id int) error
 }
 
@@ -94,6 +95,16 @@ func (r *sqlTaskRepository) DeleteTask(id int) error {
 	_, err := r.db.Exec("DELETE FROM tasks WHERE id = @p1", id)
 	if err != nil {
 		log.Println("Error deleting task:", err)
+		return err
+	}
+	return nil
+}
+
+// New method to update only the task's completed status
+func (r *sqlTaskRepository) UpdateTaskStatus(id int, completed bool) error {
+	_, err := r.db.Exec("UPDATE tasks SET completed = @p1 WHERE id = @p2", completed, id)
+	if err != nil {
+		log.Println("Error updating task status:", err)
 		return err
 	}
 	return nil

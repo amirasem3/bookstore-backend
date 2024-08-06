@@ -15,6 +15,7 @@ type TaskUsecase interface {
 	GetTaskByID(id int) (*entity.Task, error)
 	CreateTask(task *entity.Task) error
 	UpdateTask(task *entity.Task) error
+	UpdateTaskStatus(id int, completed bool) error // Add new method
 	DeleteTask(id int) error
 }
 
@@ -43,4 +44,7 @@ func (u *taskUsecase) UpdateTask(task *entity.Task) error {
 }
 func (u *taskUsecase) DeleteTask(id int) error {
 	return u.repo.DeleteTask(id)
+} // Implement new UpdateTaskStatus method
+func (u *taskUsecase) UpdateTaskStatus(id int, completed bool) error {
+	return u.repo.UpdateTaskStatus(id, completed)
 }

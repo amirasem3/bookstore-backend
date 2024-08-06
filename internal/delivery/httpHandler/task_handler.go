@@ -31,6 +31,29 @@ func (h *TaskHandler) HandleTasks(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// New handler for updating the completed status
+func (h *TaskHandler) UpdateCompletedStatus(w http.ResponseWriter, r *http.Request) {
+	var data struct {
+		ID        int  `json:"id"`
+		Completed bool `json:"completed"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err := h.usecase.UpdateTaskStatus(data.ID, data.Completed)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"status": "updated"})
+}
+
 func (h *TaskHandler) getTasks(w http.ResponseWriter, r *http.Request) {
 	tasks, err := h.usecase.GetTasks()
 	if err != nil {
